@@ -82,3 +82,16 @@ func (bh *bookHandle) Delete() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, "berhasil hapus data buku")
 	}
 }
+
+func (bh *bookHandle) MyBook() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		token := c.Get("user")
+		res, err := bh.srv.MyBook(token)
+		if err != nil {
+			return c.JSON(helper.PrintErrorResponse(err.Error()))
+		}
+
+		listMyBooks := ListUserCoreToUserRespon(res)
+		return c.JSON(helper.PrintSuccessReponse(http.StatusCreated, "sukses menampilkan koleksi buku", listMyBooks))
+	}
+}

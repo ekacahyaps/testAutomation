@@ -84,3 +84,19 @@ func (bs *bookSrv) Delete(token interface{}, bookID int) error {
 	}
 	return nil
 }
+
+func (bs *bookSrv) MyBook(token interface{}) ([]book.Core, error) {
+	userID := helper.ExtractToken(token)
+
+	res, err := bs.data.MyBook(userID)
+	if err != nil {
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "data tidak ditemukan"
+		} else {
+			msg = "terdapat masalah pada server"
+		}
+		return []book.Core{}, errors.New(msg)
+	}
+	return res, nil
+}

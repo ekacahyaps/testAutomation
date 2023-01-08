@@ -68,6 +68,14 @@ func (bd *bookData) Delete(bookID int, userID int) error {
 
 }
 
-// func (bd *bookData) MyBook(userID int) ([]book.Core, error) {
-// 	return nil, nil
-// }
+func (bd *bookData) MyBook(userID int) ([]book.Core, error) {
+	myBooks := []BooksOwner{}
+	err := bd.db.Raw("SELECT books.id, books.judul, books.penulis, books.tahun_terbit, users.nama FROM books JOIN users ON users.id = books.user_id where books.user_id = ?", userID).Find(&myBooks).Error
+	if err != nil {
+		return []book.Core{}, err
+	}
+
+	listMyBooks := ListModelTOCore(myBooks)
+
+	return listMyBooks, nil
+}
