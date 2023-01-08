@@ -78,14 +78,14 @@ func (uc *userControll) Update() echo.HandlerFunc {
 	}
 }
 
-// func (uc *userControll) Deactive() echo.HandlerFunc {
-// 	return func(c echo.Context) error {
-// 		var token interface{}
+func (uc *userControll) Deactive() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		token := c.Get("user")
 
-// 		err := uc.srv.Deactive(token)
-// 		if err != nil {
-// 			return c.JSON(PrintErrorResponse(err.Error()))
-// 		}
-// 		return c.JSON(http.StatusOK, "berhasil hapus data")
-// 	}
-// }
+		err := uc.srv.Deactive(token)
+		if err != nil {
+			return c.JSON(PrintErrorResponse(err.Error()))
+		}
+		return c.JSON(http.StatusOK, "berhasil hapus data")
+	}
+}

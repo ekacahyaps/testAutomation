@@ -111,21 +111,21 @@ func (uuc *userUseCase) Update(token interface{}, updateData user.Core) (user.Co
 	return res, nil
 }
 
-// func (uuc *userUseCase) Deactive(token interface{}) error {
-// 	id := helper.ExtractToken(token)
-// 	if id <= 0 {
-// 		return errors.New("data tidak ditemukan")
-// 	}
+func (uuc *userUseCase) Deactive(token interface{}) error {
+	id := helper.ExtractToken(token)
+	if id <= 0 {
+		return errors.New("data tidak ditemukan")
+	}
 
-// 	err := uuc.qry.Deactive(uint(id))
-// 	if err != nil {
-// 		msg := ""
-// 		if strings.Contains(err.Error(), "not found") {
-// 			msg = "data tidak ditemukan"
-// 		} else {
-// 			msg = "terdapat masalah pada server"
-// 		}
-// 		return errors.New(msg)
-// 	}
-// 	return nil
-// }
+	err := uuc.qry.Deactive(uint(id))
+	if err != nil {
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "data tidak ditemukan"
+		} else {
+			msg = "terdapat masalah pada server"
+		}
+		return errors.New(msg)
+	}
+	return nil
+}
