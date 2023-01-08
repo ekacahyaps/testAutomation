@@ -14,11 +14,24 @@ type AddBookResponse struct {
 	TahunTerbit int    `json:"tahun_terbit"`
 	Penulis     string `json:"penulis"`
 }
+type MyBookResponse struct {
+	ID          uint   `json:"id"`
+	Judul       string `json:"judul"`
+	TahunTerbit int    `json:"tahun_terbit"`
+	Penulis     string `json:"penulis"`
+}
 
 func ToResponse(feature string, book book.Core) interface{} {
 	switch feature {
 	case "add":
 		return AddBookResponse{
+			Judul:       book.Judul,
+			TahunTerbit: book.TahunTerbit,
+			Penulis:     book.Penulis,
+		}
+	case "my":
+		return MyBookResponse{
+			ID:          book.ID,
 			Judul:       book.Judul,
 			TahunTerbit: book.TahunTerbit,
 			Penulis:     book.Penulis,
@@ -34,7 +47,24 @@ func ToResponse(feature string, book book.Core) interface{} {
 	}
 }
 
-func UserCoreToUserRespon(dataCore book.Core) BookResponse { // data user core yang ada di controller yang memanggil user repository
+func MyBookToResponse(dataCore book.Core) MyBookResponse { // data user core yang ada di controller yang memanggil user repository
+	return MyBookResponse{
+		ID:          dataCore.ID,
+		Judul:       dataCore.Judul,
+		TahunTerbit: dataCore.TahunTerbit,
+		Penulis:     dataCore.Penulis,
+	}
+}
+func ListMyBookToResponse(dataCore []book.Core) []MyBookResponse { //data user.core data yang diambil dari entities ke respon struct
+	var ResponData []MyBookResponse
+
+	for _, value := range dataCore { //memanggil paramete data core yang berisi data user core
+		ResponData = append(ResponData, MyBookToResponse(value)) // mengambil data mapping dari user core to respon
+	}
+	return ResponData
+}
+
+func AllBooksToResponse(dataCore book.Core) BookResponse { // data user core yang ada di controller yang memanggil user repository
 	return BookResponse{
 		ID:          dataCore.ID,
 		Judul:       dataCore.Judul,
@@ -43,11 +73,11 @@ func UserCoreToUserRespon(dataCore book.Core) BookResponse { // data user core y
 		Pemilik:     dataCore.Pemilik,
 	}
 }
-func ListUserCoreToUserRespon(dataCore []book.Core) []BookResponse { //data user.core data yang diambil dari entities ke respon struct
+func ListAllBooksToResponse(dataCore []book.Core) []BookResponse { //data user.core data yang diambil dari entities ke respon struct
 	var ResponData []BookResponse
 
 	for _, value := range dataCore { //memanggil paramete data core yang berisi data user core
-		ResponData = append(ResponData, UserCoreToUserRespon(value)) // mengambil data mapping dari user core to respon
+		ResponData = append(ResponData, AllBooksToResponse(value)) // mengambil data mapping dari user core to respon
 	}
 	return ResponData
 }

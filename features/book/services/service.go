@@ -100,3 +100,18 @@ func (bs *bookSrv) MyBook(token interface{}) ([]book.Core, error) {
 	}
 	return res, nil
 }
+
+func (bs *bookSrv) AllBooks() ([]book.Core, error) {
+
+	res, err := bs.data.AllBooks()
+	if err != nil {
+		msg := ""
+		if strings.Contains(err.Error(), "not found") {
+			msg = "data tidak ditemukan"
+		} else {
+			msg = "terdapat masalah pada server"
+		}
+		return []book.Core{}, errors.New(msg)
+	}
+	return res, nil
+}

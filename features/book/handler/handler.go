@@ -91,7 +91,20 @@ func (bh *bookHandle) MyBook() echo.HandlerFunc {
 			return c.JSON(helper.PrintErrorResponse(err.Error()))
 		}
 
-		listMyBooks := ListUserCoreToUserRespon(res)
+		listMyBooks := ListMyBookToResponse(res)
 		return c.JSON(helper.PrintSuccessReponse(http.StatusCreated, "sukses menampilkan koleksi buku", listMyBooks))
+	}
+}
+
+func (bh *bookHandle) AllBooks() echo.HandlerFunc {
+	return func(c echo.Context) error {
+
+		res, err := bh.srv.AllBooks()
+		if err != nil {
+			return c.JSON(helper.PrintErrorResponse(err.Error()))
+		}
+
+		listAllBooks := ListAllBooksToResponse(res)
+		return c.JSON(helper.PrintSuccessReponse(http.StatusCreated, "sukses menampilkan koleksi buku", listAllBooks))
 	}
 }
