@@ -40,7 +40,8 @@ func CoreToData(data book.Core) Books {
 	}
 }
 
-func (dataModel *Books) ModelsToCore() book.Core { //fungsi yang mengambil data dari  user gorm(model.go)  dan merubah data ke entities usercore
+// For MyBooks
+func (dataModel *Books) ModelsToCore() book.Core {
 	return book.Core{
 		ID:          dataModel.ID,
 		Judul:       dataModel.Judul,
@@ -49,15 +50,16 @@ func (dataModel *Books) ModelsToCore() book.Core { //fungsi yang mengambil data 
 	}
 }
 
-func ListModelToCore(dataModel []Books) []book.Core { //fungsi yang mengambil data dari  user gorm(model.go)  dan merubah data ke entities usercore
+func ListModelToCore(dataModel []Books) []book.Core {
 	var dataCore []book.Core
 	for _, value := range dataModel {
 		dataCore = append(dataCore, value.ModelsToCore())
 	}
-	return dataCore //  untuk menampilkan data ke controller
+	return dataCore
 }
 
-func (dataModel *BooksOwner) AllModelsToCore() book.Core { //fungsi yang mengambil data dari  user gorm(model.go)  dan merubah data ke entities usercore
+// For AllBooks (view all books collection)
+func (dataModel *BooksOwner) AllModelsToCore() book.Core {
 	return book.Core{
 		ID:          dataModel.ID,
 		Judul:       dataModel.Judul,
@@ -67,10 +69,10 @@ func (dataModel *BooksOwner) AllModelsToCore() book.Core { //fungsi yang mengamb
 	}
 }
 
-func ListAllModelToCore(dataModel []BooksOwner) []book.Core { //fungsi yang mengambil data dari  user gorm(model.go)  dan merubah data ke entities usercore
+func ListAllModelToCore(dataModel []BooksOwner) []book.Core {
 	var dataCore []book.Core
 	for _, value := range dataModel {
 		dataCore = append(dataCore, value.AllModelsToCore())
 	}
-	return dataCore //  untuk menampilkan data ke controller
+	return dataCore
 }

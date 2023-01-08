@@ -35,7 +35,7 @@ func (bh *bookHandle) Add() echo.HandlerFunc {
 			return c.JSON(helper.PrintErrorResponse(err.Error()))
 		}
 
-		return c.JSON(helper.PrintSuccessReponse(http.StatusCreated, "sukses menambahkan buku", res))
+		return c.JSON(helper.PrintSuccessReponse(http.StatusCreated, "sukses menambahkan buku", AddBookToResponse(res)))
 	}
 }
 func (bh *bookHandle) Update() echo.HandlerFunc {
@@ -67,7 +67,7 @@ func (bh *bookHandle) Update() echo.HandlerFunc {
 
 func (bh *bookHandle) Delete() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var token interface{}
+		token := c.Get("user")
 		input := c.Param("id")
 		cnv, err := strconv.Atoi(input)
 		if err != nil {

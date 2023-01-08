@@ -4,19 +4,21 @@ import (
 	"api/features/book"
 	"api/helper"
 	"errors"
+	"log"
 	"strings"
-	// "github.com/go-playground/validator/v10"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type bookSrv struct {
 	data book.BookData
-	// vld  *validator.Validate
+	vld  *validator.Validate
 }
 
 func New(d book.BookData) book.BookService {
 	return &bookSrv{
 		data: d,
-		// vld:  validator.New(),
+		vld:  validator.New(),
 	}
 }
 
@@ -26,13 +28,13 @@ func (bs *bookSrv) Add(token interface{}, newBook book.Core) (book.Core, error) 
 		return book.Core{}, errors.New("user tidak ditemukan")
 	}
 
-	// err := bs.vld.Struct(newBook)
-	// if err != nil {
-	// 	if _, ok := err.(*validator.InvalidValidationError); ok {
-	// 		log.Println(err)
-	// 	}
-	// 	return book.Core{}, errors.New("input buku tidak sesuai dengan arahan")
-	// }
+	err := bs.vld.Struct(newBook)
+	if err != nil {
+		if _, ok := err.(*validator.InvalidValidationError); ok {
+			log.Println(err)
+		}
+		return book.Core{}, errors.New("input buku tidak sesuai dengan arahan")
+	}
 
 	res, err := bs.data.Add(userID, newBook)
 	if err != nil {

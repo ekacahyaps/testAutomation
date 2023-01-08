@@ -82,7 +82,7 @@ func (bd *bookData) MyBook(userID int) ([]book.Core, error) {
 
 func (bd *bookData) AllBooks() ([]book.Core, error) {
 	myBooks := []BooksOwner{}
-	err := bd.db.Raw("SELECT books.id, books.judul, books.penulis, books.tahun_terbit, users.nama as pemilik FROM books JOIN users ON users.id = books.user_id").Find(&myBooks).Error
+	err := bd.db.Raw("SELECT books.id, books.judul, books.penulis, books.tahun_terbit, users.nama as pemilik FROM books JOIN users ON users.id = books.user_id WHERE books.deleted_at is NULL").Find(&myBooks).Error
 	if err != nil {
 		return []book.Core{}, err
 	}
