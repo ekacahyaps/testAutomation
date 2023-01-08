@@ -23,6 +23,7 @@ func (bd *bookData) Add(userID int, newBook book.Core) (book.Core, error) {
 	cnv.UserID = uint(userID)
 	err := bd.db.Create(&cnv).Error
 	if err != nil {
+		log.Println("add book query error")
 		return book.Core{}, err
 	}
 
@@ -60,7 +61,7 @@ func (bd *bookData) Delete(bookID int, userID int) error {
 	err := qry.Error
 
 	if err != nil {
-		log.Println("delete query error")
+		log.Println("delete book query error")
 		return errors.New("tidak bisa menghapus data buku")
 	}
 
@@ -72,6 +73,7 @@ func (bd *bookData) MyBook(userID int) ([]book.Core, error) {
 	myBooks := []Books{}
 	err := bd.db.Where("user_id = ?", userID).Find(&myBooks).Error
 	if err != nil {
+		log.Println("my book query error")
 		return []book.Core{}, err
 	}
 
@@ -84,6 +86,7 @@ func (bd *bookData) AllBooks() ([]book.Core, error) {
 	myBooks := []BooksOwner{}
 	err := bd.db.Raw("SELECT books.id, books.judul, books.penulis, books.tahun_terbit, users.nama as pemilik FROM books JOIN users ON users.id = books.user_id WHERE books.deleted_at is NULL").Find(&myBooks).Error
 	if err != nil {
+		log.Println("all book query error")
 		return []book.Core{}, err
 	}
 

@@ -24,6 +24,7 @@ func (bh *bookHandle) Add() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		input := AddBookRequest{}
 		if err := c.Bind(&input); err != nil {
+			log.Println("add book body scan error")
 			return c.JSON(http.StatusBadRequest, "format inputan salah")
 		}
 
@@ -45,18 +46,18 @@ func (bh *bookHandle) Update() echo.HandlerFunc {
 		bookID := c.Param("id")
 		cnv, err := strconv.Atoi(bookID)
 		if err != nil {
+			log.Println("update book param error")
 			return c.JSON(http.StatusBadRequest, "id salah")
 		}
 
 		input := UpdateBookRequest{}
 		err2 := c.Bind(&input)
 		if err2 != nil {
+			log.Println("update book body scan error")
 			return c.JSON(http.StatusBadRequest, "format inputan salah")
 		}
 
-		cnvInput := ToCore(input)
-
-		res, err := bh.srv.Update(token, cnv, *ToCore(cnvInput))
+		res, err := bh.srv.Update(token, cnv, *ToCore(input))
 		if err != nil {
 			log.Println("trouble : ", err.Error())
 			return c.JSON(helper.PrintErrorResponse(err.Error()))
@@ -71,6 +72,7 @@ func (bh *bookHandle) Delete() echo.HandlerFunc {
 		input := c.Param("id")
 		cnv, err := strconv.Atoi(input)
 		if err != nil {
+			log.Println("delete book param error")
 			return c.JSON(http.StatusBadRequest, "id salah")
 		}
 
