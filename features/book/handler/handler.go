@@ -40,7 +40,7 @@ func (bh *bookHandle) Add() echo.HandlerFunc {
 }
 func (bh *bookHandle) Update() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var token interface{}
+		token := c.Get("user")
 
 		bookID := c.Param("id")
 		cnv, err := strconv.Atoi(bookID)
@@ -56,7 +56,7 @@ func (bh *bookHandle) Update() echo.HandlerFunc {
 
 		cnvInput := ToCore(input)
 
-		res, err := bh.srv.Update(token, cnv, *cnvInput)
+		res, err := bh.srv.Update(token, cnv, *ToCore(cnvInput))
 		if err != nil {
 			log.Println("trouble : ", err.Error())
 			return c.JSON(helper.PrintErrorResponse(err.Error()))
