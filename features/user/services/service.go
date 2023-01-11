@@ -7,11 +7,9 @@ import (
 	"errors"
 	"log"
 	"strings"
-	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type userUseCase struct {
@@ -38,15 +36,15 @@ func (uuc *userUseCase) Login(email, password string) (string, user.Core, error)
 		return "", user.Core{}, errors.New(msg)
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(res.Password), []byte(password)); err != nil {
+	if err := helper.CheckPassword(res.Password, password); err != nil {
 		log.Println("login compare", err.Error())
-		return "", user.Core{}, errors.New("password tidak sesuai")
+		return "", user.Core{}, errors.New("password tidak sesuai " + res.Password)
 	}
 
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
 	claims["userID"] = res.ID
-	claims["exp"] = time.Now().Add(time.Hour * 1).Unix() //Token expires after 1 hour
+	// claims["exp"] = time.Now().Add(time.Hour * 1).Unix() //Token expires after 1 hour
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	useToken, _ := token.SignedString([]byte(config.JWT_KEY))
 
@@ -54,7 +52,7 @@ func (uuc *userUseCase) Login(email, password string) (string, user.Core, error)
 
 }
 func (uuc *userUseCase) Register(newUser user.Core) (user.Core, error) {
-	hashed, err := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
+	hashed, err := helper.GeneratePassword(newUser.Password)
 	if err != nil {
 		log.Println("bcrypt error ", err.Error())
 		return user.Core{}, errors.New("password process error")
@@ -94,7 +92,7 @@ func (uuc *userUseCase) Profile(token interface{}) (user.Core, error) {
 func (uuc *userUseCase) Update(token interface{}, updateData user.Core) (user.Core, error) {
 	id := helper.ExtractToken(token)
 	if id <= 0 {
-		return user.Core{}, errors.New("data tidak ditemukan")
+		return user.Core{}, errors.New("id tidak ditemukan")
 	}
 
 	res, err := uuc.qry.Update(uint(id), updateData)
@@ -122,8 +120,6 @@ func (uuc *userUseCase) Deactive(token interface{}) error {
 		msg := ""
 		if strings.Contains(err.Error(), "not found") {
 			msg = "data tidak ditemukan"
-		} else {
-			msg = "terdapat masalah pada server"
 		}
 		return errors.New(msg)
 	}
